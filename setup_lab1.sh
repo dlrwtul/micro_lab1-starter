@@ -1339,11 +1339,14 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
         http
             .authorizeHttpRequests(authorize -> 
                 authorize
-                    .requestMatchers("/register/**", "/login/**", "/h2-console/**", "/css/**", "/js/**").permitAll()
+                    .requestMatchers(mvc.pattern("/register/**"), mvc.pattern("/login/**"), 
+                                    mvc.pattern("/css/**"), mvc.pattern("/js/**")).permitAll()
+                    // Pour H2 Console, utilisez AntPathRequestMatcher
+                    .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                     .anyRequest().authenticated()
             )
             .formLogin(form -> 
@@ -1362,11 +1365,17 @@ public class SecurityConfig {
                 headers.frameOptions().disable()
             )
             .csrf(csrf -> 
-                csrf.ignoringRequestMatchers("/h2-console/**")
+                csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
             );
         
         return http.build();
     }
+
+    // Ajoutez cette méthode pour créer le MvcRequestMatcher.Builder
+    @Bean
+    public MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+}
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {

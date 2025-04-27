@@ -76,12 +76,7 @@ microservices-todo/
 
 L'application monolithique est complètement fonctionnelle et peut être exécutée comme référence :
 
-```bash
-cd microservices-todo/monolith
-./gradlew bootRun
-```
-
-Ou avec Docker :
+avec Docker :
 
 ```bash
 cd microservices-todo/monolith
