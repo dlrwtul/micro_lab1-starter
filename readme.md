@@ -1,166 +1,294 @@
-# TP1 : Transformation d'une application monolithique en microservices
+# Architecture Logicielles Modernes - TP1
 
-Ce dépôt contient le code de départ pour le TP1 du cours "Architecture Logicielles Modernes" qui porte sur la transformation d'une application monolithique en architecture microservices.
+Ce projet implémente une application de gestion de tâches (Todo List) basée sur une architecture microservices. L'application est décomposée en trois microservices distincts, chacun développé avec une technologie différente pour illustrer le concept de polyglot programming.
 
-## Objectifs du TP
+## Architecture des microservices
 
-Dans ce TP, vous allez :
+L'application est composée des éléments suivants :
 
-1. Explorer et comprendre une application monolithique existante
-2. Identifier les composants autonomes et leurs limites (bounded contexts) dans cette application
-3. Implémenter des microservices autonomes en utilisant différents langages et frameworks
-4. Mettre en place une communication inter-services via des API REST
-5. Gérer les bases de données indépendantes pour chaque service
-6. Déployer et orchestrer l'ensemble avec Docker Compose
+1. **Service Utilisateurs** (Java/Spring Boot) : Gestion des utilisateurs et authentification
+2. **Service Tâches** (Node.js/Express) : Gestion des tâches et leur cycle de vie
+3. **Service Notifications** (Python/Flask) : Envoi de notifications pour les tâches à échéance
+4. **Frontend** (React) : Interface utilisateur pour interagir avec les services
 
-## Contenu du projet généré
+Chaque service a sa propre base de données et est déployé dans un conteneur Docker distinct.
 
-Le script `setup_lab1.sh` génère :
+## Prérequis
 
-1. **Une application monolithique fonctionnelle** (dans le dossier `monolith`)
-2. **La structure des microservices à compléter** (dans le dossier `microservices`)
+Pour exécuter ce projet, vous aurez besoin des éléments suivants :
 
-## Comment démarrer
+- **Docker et Docker Compose** (pour l'orchestration des conteneurs)
+- **JDK 17+** (pour le service Utilisateurs)
+- **Node.js 18+** (pour le service Tâches et le Frontend)
+- **Python 3.9+** (pour le service Notifications)
+- **Git** (pour la gestion du code source)
 
-### Prérequis
+## Fonctionnalités du script startup.sh
 
-- Bash (Linux ou macOS) ou Git Bash sur Windows
-- Droits d'exécution sur les fichiers
-- Docker et Docker Compose pour l'exécution
-- JDK 17+, Node.js 18+, Python 3.9+ pour le développement
+Le script `startup.sh` automatise l'installation et le démarrage de l'architecture microservices. Il réalise les actions suivantes :
 
-### Installation
+1. **Vérification des prérequis** - S'assure que tous les outils nécessaires sont installés
+2. **Nettoyage des builds précédents** - Supprime les conteneurs, images et volumes existants
+3. **Génération complète du code source** pour chaque service :
+   - **Service Utilisateurs** :
+     - Structure de projet Spring Boot
+     - Modèles, repositories, services et contrôleurs
+     - Configuration de sécurité et base de données
+   - **Service Tâches** :
+     - Structure de projet Express
+     - Modèles, contrôleurs et services
+     - Configuration de la base de données SQLite
+   - **Service Notifications** :
+     - Structure de projet Flask
+     - Modèles, routes et services
+     - Communication inter-services
+   - **Frontend** :
+     - Structure de projet React
+     - Composants, pages et services
+     - Formulaires et interface utilisateur complète
+4. **Configuration Docker** pour chaque service
+5. **Démarrage orchestré** de tous les services
 
-1. Clonez ce dépôt :
+## Installation et démarrage rapide
 
-```bash
-git clone https://github.com/elbachir67/micro_lab1-starter.git
-cd micro_lab1-starter
-```
+1. Clonez le dépôt :
 
-2. Rendez le script d'installation exécutable :
+   ```bash
+   git clone https://github.com/elbachir67/micro_lab1-starter.git
+   cd micro_lab1-starter
+   ```
 
-```bash
-chmod +x setup_lab1.sh
-```
+2. Rendez le script de démarrage exécutable :
 
-3. Exécutez le script pour générer la structure du projet :
+   ```bash
+   chmod +x startup.sh
+   ```
 
-```bash
-./setup_lab1.sh
-```
+3. Exécutez le script de démarrage pour configurer et lancer tous les services :
 
-4. Le script créera un dossier `microservices-todo` contenant l'application monolithique et la structure des microservices à compléter.
+   ```bash
+   ./startup.sh
+   ```
 
-## Structure du projet généré
+4. Accédez à l'application via votre navigateur :
+   ```
+   http://localhost:3000
+   ```
+
+Le script générera et configurera automatiquement tous les fichiers nécessaires pour faire fonctionner l'application complète, y compris tous les fichiers source des différents services.
+
+## Utilisation du script startup.sh
+
+Le script `startup.sh` offre plusieurs options pour vous aider à gérer le cycle de vie des services :
+
+### Options disponibles
+
+- **Sans option** : Configure, génère tous les fichiers source et démarre tous les services
+
+  ```bash
+  ./startup.sh
+  ```
+
+- **Aide** : Affiche l'aide et les options disponibles
+
+  ```bash
+  ./startup.sh -h
+  # ou
+  ./startup.sh --help
+  ```
+
+- **Nettoyage** : Nettoie les builds précédents (arrête et supprime les conteneurs et images)
+
+  ```bash
+  ./startup.sh -c
+  # ou
+  ./startup.sh --clean
+  ```
+
+- **Configuration** : Configure et génère tous les fichiers source sans démarrer les services
+
+  ```bash
+  ./startup.sh -s
+  # ou
+  ./startup.sh --setup
+  ```
+
+- **Démarrage** : Démarre les services sans reconfiguration
+
+  ```bash
+  ./startup.sh -r
+  # ou
+  ./startup.sh --run
+  ```
+
+- **Logs** : Affiche les logs des services en cours d'exécution
+
+  ```bash
+  ./startup.sh --logs
+  ```
+
+- **Arrêt** : Arrête tous les services
+  ```bash
+  ./startup.sh --stop
+  ```
+
+## Structure du projet générée
+
+Le script générera la structure de projet suivante :
 
 ```
 microservices-todo/
-|-- monolith/                      # Application monolithique fonctionnelle
-|   |-- src/                       # Code source
-|   |-- build.gradle               # Configuration Gradle
-|   |-- docker-compose.yml         # Configuration Docker pour le monolithe
-|   |-- Dockerfile                 # Instructions de conteneurisation
-|   |-- gradlew, gradlew.bat       # Scripts Gradle Wrapper
-|
 |-- microservices/
-|   |-- user-service/              # Service Utilisateurs (Java/Spring Boot)
-|   |-- task-service/              # Service Tâches (Node.js/Express)
-|   |-- notification-service/      # Service Notifications (Python/Flask)
-|   |-- frontend/                  # Interface utilisateur (à intégrer)
+|   |-- user-service/            # Service Utilisateurs (Java/Spring Boot)
+|   |   |-- src/
+|   |   |   |-- main/
+|   |   |       |-- java/
+|   |   |           |-- com/fst/dmi/userservice/
+|   |   |               |-- controller/
+|   |   |               |-- model/
+|   |   |               |-- repository/
+|   |   |               |-- service/
+|   |   |               |-- config/
+|   |   |-- build.gradle
+|   |   |-- Dockerfile
+|   |
+|   |-- task-service/            # Service Tâches (Node.js/Express)
+|   |   |-- src/
+|   |   |   |-- config/
+|   |   |   |-- controllers/
+|   |   |   |-- models/
+|   |   |   |-- routes/
+|   |   |   |-- services/
+|   |   |   |-- app.js
+|   |   |-- package.json
+|   |   |-- Dockerfile
+|   |
+|   |-- notification-service/    # Service Notifications (Python/Flask)
+|   |   |-- models/
+|   |   |-- services/
+|   |   |-- routes/
+|   |   |-- app.py
+|   |   |-- requirements.txt
+|   |   |-- Dockerfile
+|   |
+|   |-- frontend/                # Interface utilisateur (React)
+|       |-- src/
+|       |   |-- components/
+|       |   |-- pages/
+|       |   |-- services/
+|       |-- package.json
+|       |-- Dockerfile
 |
-|-- docker-compose.yml             # Orchestration des microservices
+|-- docker-compose.yml           # Orchestration de tous les services
 ```
 
-## Utilisation de l'application monolithique
+## Ports des services
 
-L'application monolithique est complètement fonctionnelle et peut être exécutée comme référence :
+- **Service Utilisateurs** : http://localhost:8081
+- **Service Tâches** : http://localhost:8082
+- **Service Notifications** : http://localhost:8083
+- **Frontend** : http://localhost:3000
 
-avec Docker :
+## Fonctionnalités de l'application
 
-```bash
-cd microservices-todo/monolith
-docker-compose up --build
-```
+1. **Gestion des utilisateurs**
 
-Vous pouvez accéder à l'application monolithique sur [http://localhost:8080](http://localhost:8080)
+   - Inscription de nouveaux utilisateurs
+   - Connexion et authentification
+   - Gestion des profils utilisateurs
 
-## Travail sur les microservices
+2. **Gestion des tâches**
 
-Pour chaque microservice, vous devez compléter les parties marquées avec des commentaires `TODO-XXX` selon les instructions du TP.
+   - Création, modification et suppression de tâches
+   - Marquage des tâches comme terminées
+   - Affichage des tâches par utilisateur
 
-Les microservices et leurs technologies sont :
+3. **Notifications**
+   - Génération automatique de notifications pour les tâches à échéance proche
+   - Consultation des notifications par utilisateur
+   - Marquage des notifications comme lues
 
-1. **Service Utilisateurs** (Java/Spring Boot) : Port 8081
+## Détails techniques
 
-   - Gestion des utilisateurs et authentification
-   - TODOs: MS1, MS2, MS3, MS4, MS5, MS6
+### Service Utilisateurs (Java/Spring Boot)
 
-2. **Service Tâches** (Node.js/Express) : Port 8082
+- **Langage** : Java 17
+- **Framework** : Spring Boot 3.x
+- **Base de données** : H2 (base de données embarquée)
+- **Port** : 8081
+- **API REST** pour la gestion des utilisateurs
 
-   - Gestion des tâches et leur cycle de vie
-   - TODOs: MS7, MS8, MS9, COMM1
+### Service Tâches (Node.js/Express)
 
-3. **Service Notifications** (Python/Flask) : Port 8083
-   - Envoi des notifications pour les tâches à échéance
-   - TODOs: MS10, MS11, MS12, COMM2
+- **Langage** : JavaScript
+- **Runtime** : Node.js 18.x
+- **Framework** : Express.js
+- **ORM** : Sequelize avec SQLite
+- **Port** : 8082
+- **API REST** pour la gestion des tâches
 
-## Tests des microservices
+### Service Notifications (Python/Flask)
 
-Une fois que vous avez complété les TODOs d'un service, vous pouvez le tester individuellement :
+- **Langage** : Python 3.9+
+- **Framework** : Flask
+- **ORM** : SQLAlchemy avec SQLite
+- **Port** : 8083
+- **API REST** pour la gestion des notifications
 
-### Service Utilisateurs
+### Frontend (React)
 
-```bash
-cd microservices-todo/microservices/user-service
-./gradlew bootRun
-```
+- **Bibliothèque** : React 18
+- **Style** : Bootstrap 5
+- **Client HTTP** : Axios
+- **Routing** : React Router
+- **Port** : 3000
 
-### Service Tâches
+## Communication inter-services
 
-```bash
-cd microservices-todo/microservices/task-service
-npm install
-npm start
-```
+Les services communiquent entre eux via des API REST :
 
-### Service Notifications
+1. Le service Tâches communique avec le service Utilisateurs pour vérifier l'existence des utilisateurs
+2. Le service Notifications communique avec le service Tâches pour récupérer les tâches à échéance proche
+3. Le Frontend communique avec tous les services pour offrir une interface utilisateur unifiée
 
-```bash
-cd microservices-todo/microservices/notification-service
-pip install -r requirements.txt
-python app.py
-```
+## Problèmes connus et solutions
 
-## Démarrage du système complet avec Docker Compose
+### Communication inter-services dans Docker
 
-Une fois que tous les TODOs sont complétés, vous pouvez démarrer l'ensemble du système avec Docker Compose :
+Si vous rencontrez des problèmes de communication entre les services, assurez-vous que les URLs des services sont correctement configurées dans les fichiers de configuration:
 
-```bash
-cd microservices-todo
-docker-compose up --build
-```
+- Dans `task-service/src/services/userService.js`:
 
-Vous pourrez alors accéder à chaque service :
+  ```javascript
+  const USER_SERVICE_URL =
+    process.env.NODE_ENV === "production"
+      ? "http://user-service:8081"
+      : "http://localhost:8081";
+  ```
 
-- Service Utilisateurs : [http://localhost:8081](http://localhost:8081)
-- Service Tâches : [http://localhost:8082](http://localhost:8082)
-- Service Notifications : [http://localhost:8083](http://localhost:8083)
-- Frontend (si intégré) : [http://localhost:3000](http://localhost:3000)
+- Dans `notification-service/services/task_service.py`:
+  ```python
+  TASK_SERVICE_URL = 'http://task-service:8082' if os.environ.get('FLASK_ENV') == 'production' else 'http://localhost:8082'
+  ```
 
-## Conseils pour réussir le TP
+### Problèmes de base de données
 
-1. Commencez par **explorer l'application monolithique** pour comprendre sa structure et son fonctionnement
-2. Comprenez les responsabilités et limites de chaque service avant de commencer l'implémentation
-3. Complétez les services dans l'ordre : Utilisateurs → Tâches → Notifications
-4. Testez chaque service isolément avant de les intégrer
-5. Utilisez Postman ou des outils similaires pour tester les API REST
-6. Consultez les documents officiels des technologies utilisées (Spring Boot, Express, Flask) en cas de besoin
+Si les données ne persistent pas entre les redémarrages:
 
-## Points d'attention
+1. Vérifiez que les volumes sont correctement configurés dans le `docker-compose.yml`
+2. Vérifiez les permissions des dossiers de données sur votre système hôte
 
-- La communication entre les services est un aspect crucial : assurez-vous de bien comprendre comment chaque service interagit avec les autres
-- Le polyglot programming (utilisation de différentes technologies) est un aspect important du TP : observez comment chaque technologie gère différemment les mêmes concepts
-- La gestion des bases de données indépendantes pose des défis spécifiques en termes de cohérence des données
+## Contributions et remerciements
 
-Bon travail !
+Ce projet a été développé dans le cadre du cours "Architectures Logicielles Modernes" à l'Université Cheikh Anta Diop.
+
+## Licence
+
+Ce projet est sous licence ISC. Voir le fichier LICENSE pour plus de détails.
+
+## Auteur
+
+Dr. El Hadji Bassirou TOURE
+Département de Mathématiques et Informatique
+Faculté des Sciences et Techniques
+Université Cheikh Anta Diop
