@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  user-service:
+    build: ./microservices/user-service
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./microservices/user-service/data:/app/data
+    networks:
+      - microservices-network
+    restart: always
+
+  task-service:
+    build: ./microservices/task-service
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./microservices/task-service/data:/app/data
+    networks:
+      - microservices-network
+    depends_on:
+      - user-service
+    restart: always
+
+  notification-service:
+    build: ./microservices/notification-service
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./microservices/notification-service:/app
+    networks:
+      - microservices-network
+    depends_on:
+      - user-service
+      - task-service
+    restart: always
+
+  frontend:
+    build: ./microservices/frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - microservices-network
+    depends_on:
+      - user-service
+      - task-service
+      - notification-service
+    restart: always
+
+networks:
+  microservices-network:
+    driver: bridge
