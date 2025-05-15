@@ -27,5 +27,24 @@ def get_tasks_due_soon(days=1):
     """
     Get tasks due soon
     """
-    # À implémenter
-    pass
+    try:
+        response = requests.get(f'{TASK_SERVICE_URL}/api/tasks')
+        if response.status_code != 200:
+            return []
+        
+        tasks = response.json()
+        now = datetime.utcnow()
+        due_date_limit = now + timedelta(days=days)
+        
+        due_soon_tasks = []
+        for task in tasks:
+            if not task.get('completed'):
+                due_date_str = task.get('dueDate')
+                if due_date_str:
+                    due_date = datetime.fromisoformat(due_date_str.replace('Z', '+00:00'))
+                    if now <= due_date <= due_date_limit:
+                        due_soon_tasks.append(task)
+        return due_soon_tasks
+    except Exception as e:
+        print(f"Error retrieving tasks due soon: {e}")
+        return []

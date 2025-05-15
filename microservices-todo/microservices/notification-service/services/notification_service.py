@@ -64,5 +64,27 @@ def check_due_tasks():
     """
     Check tasks due soon and create notifications
     """
-    # À implémenter
-    pass
+    try:
+        due_soon_tasks = task_service.get_tasks_due_soon()
+        
+        created_notifications = []
+        
+        for task in due_soon_tasks:
+            user_id = task.get('userId')
+            task_id = task.get('id')
+            
+            existing = Notification.query.filter_by(task_id=task_id, read=False).first()
+            if existing:
+                continue
+            message = f"Task '{task.get('title')}' is due soon!"
+            
+            notification = Notification(user_id=user_id, task_id=task_id, message=message)
+            db.session.add(notification)
+            db.session.commit()
+            
+            created_notifications.append(notification.to_dict())
+        return created_notifications
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error checking due tasks: {e}")
+        return []

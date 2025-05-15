@@ -8,7 +8,25 @@ const userService = require("../services/userService");
 // 3. Créer et sauvegarder la tâche si l'utilisateur existe
 // 4. Retourner une erreur appropriée si l'utilisateur n'existe pas
 const createTask = async (req, res) => {
-  // À implémenter
+  try {
+    const { title, description, dueDate, userId } = req.body;
+    // Check if the user exists
+    const userExists = await userService.checkUserExists(userId);
+    if (!userExists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    // Create the task
+    const task = await Task.create({
+      title,
+      description,
+      dueDate,
+      userId,
+    });
+    res.status(201).json(task);
+  } catch (error) {
+    console.error("Error creating task:", error);
+    res.status(500).json({ error: "Error creating task" });
+  }
 };
 
 // Get all tasks (with optional user filtering)
@@ -95,7 +113,19 @@ const deleteTask = async (req, res) => {
 // 3. Récupérer toutes les tâches pour cet utilisateur
 // 4. Retourner une erreur appropriée si l'utilisateur n'existe pas
 const getTasksByUserId = async (req, res) => {
-  // À implémenter
+  try {
+    const { userId } = req.params;
+    // Check if the user exists
+    const userExists = await userService.checkUserExists(userId);
+    if (!userExists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const tasks = await Task.findAll({ where: { userId } });
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.error("Error retrieving user tasks:", error);
+    res.status(500).json({ error: "Error retrieving user tasks" });
+  }
 };
 
 module.exports = {

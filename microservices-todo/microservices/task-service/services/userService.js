@@ -11,7 +11,13 @@ const USER_SERVICE_URL =
 // pour vérifier si un utilisateur avec l'ID spécifié existe
 // Elle doit retourner true si la requête réussit (code 200), false sinon
 const checkUserExists = async (userId) => {
-  // À implémenter
+  try {
+    const response = await axios.get(`${USER_SERVICE_URL}/api/users/${userId}`);
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error checking user existence:", error.message);
+    return false;
+  }
 };
 
 module.exports = {
