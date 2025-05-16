@@ -36,17 +36,17 @@ services:
       - task-service
     restart: always
 
-  frontend:
-    build: ./microservices/frontend
-    ports:
-      - "3000:3000"
-    networks:
-      - microservices-network
-    depends_on:
-      - user-service
-      - task-service
-      - notification-service
-    restart: always
+  # frontend:
+  #   build: ./microservices/frontend
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - microservices-network
+  #   depends_on:
+  #     - user-service
+  #     - task-service
+  #     - notification-service
+  #   restart: always
 
 networks:
   microservices-network:

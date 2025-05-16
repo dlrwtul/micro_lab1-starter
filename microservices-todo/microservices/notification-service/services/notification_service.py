@@ -1,6 +1,6 @@
 from models.notification import Notification
 from services import user_service, task_service
-from app import db
+from extensions import db
 
 def create_notification(user_id, task_id, message):
     """

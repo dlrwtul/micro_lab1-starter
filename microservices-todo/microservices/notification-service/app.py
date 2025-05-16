@@ -12,7 +12,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notifications.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+from extensions import db
+
+db.init_app(app)
 
 # Import routes after db initialization to avoid circular imports
 from routes.notification_routes import notification_bp
