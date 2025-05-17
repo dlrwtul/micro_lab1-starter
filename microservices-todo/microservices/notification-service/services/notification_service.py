@@ -66,7 +66,6 @@ def check_due_tasks():
     """
     try:
         due_soon_tasks = task_service.get_tasks_due_soon()
-        
         created_notifications = []
         
         for task in due_soon_tasks:

@@ -2,7 +2,8 @@ import requests
 import os
 
 # User service URL
-USER_SERVICE_URL = 'http://user-service:8081' if os.environ.get('FLASK_ENV') == 'production' else 'http://localhost:8081'
+# USER_SERVICE_URL = 'http://user-service:8081' if os.environ.get('FLASK_ENV') == 'production' else 'http://localhost:8081'
+USER_SERVICE_URL = 'http://user-service:8081' 
 
 def get_user(user_id):
     """
